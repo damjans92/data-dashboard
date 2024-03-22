@@ -6,6 +6,7 @@ import darkTheme from '@/theme/darkTheme'
 import lightTheme from '@/theme/lightTheme'
 import Header from '@/components/Header'
 import Layout from '@/components/Layout'
+import { ToggleProvider } from '@/context/ToggleContext'
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} })
 
@@ -36,19 +37,21 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
   )
 
   return (
-    <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider
-        theme={mode === 'dark' ? darkThemeChosen : lightThemeChosen}
-      >
-        <SessionProvider session={session}>
-          <CssBaseline />
-          <Header ColorModeContext={ColorModeContext} />
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </SessionProvider>
-      </ThemeProvider>
-    </ColorModeContext.Provider>
+    <ToggleProvider>
+      <ColorModeContext.Provider value={colorMode}>
+        <ThemeProvider
+          theme={mode === 'dark' ? darkThemeChosen : lightThemeChosen}
+        >
+          <SessionProvider session={session}>
+            <CssBaseline />
+            <Header ColorModeContext={ColorModeContext} />
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </SessionProvider>
+        </ThemeProvider>
+      </ColorModeContext.Provider>
+    </ToggleProvider>
   )
 }
 

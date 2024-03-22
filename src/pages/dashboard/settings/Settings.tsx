@@ -1,3 +1,5 @@
+import React, { useState } from 'react'
+import { useToggleContext } from '@/context/ToggleContext' // Assuming context folder is at 'context'
 import {
   Box,
   Button,
@@ -7,31 +9,61 @@ import {
   Switch,
   Typography,
 } from '@mui/material'
-import React, { useState } from 'react'
 
 const Settings = () => {
-  const [showRevenue, setShowRevenue] = useState(true)
-  const [showProfit, setShowProfit] = useState(true)
-  const [showOrders, setShowOrders] = useState(true)
-  const [showCustomers, setShowCustomers] = useState(true)
+  const {
+    isTotalValueVisible,
+    toggleTotalValue,
+    isAvgOrderValueVisible,
+    toggleAvgOrderValue,
+    isConversionRateVisible,
+    toggleConversionRate,
+    isTransactionsUserTypeVisible,
+    toggleTransactionsUserType,
+  } = useToggleContext()
 
-  const handleShowRevenueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShowRevenue(e.target.checked)
-  }
-  const handleShowProfitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShowProfit(e.target.checked)
-  }
-  const handleShowOrdersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShowOrders(e.target.checked)
-  }
-  const handleShowCustomersChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setShowCustomers(e.target.checked)
+  const [localIsTotalValueVisible, setLocalIsTotalValueVisible] =
+    useState(isTotalValueVisible)
+  const [localIsAvgOrderValueVisible, setLocalIsAvgOrderValueVisible] =
+    useState(isAvgOrderValueVisible)
+  const [localIsConversionRateVisible, setLocalIsConversionRateVisible] =
+    useState(isConversionRateVisible)
+  const [
+    localIsTransactionsUserTypeVisible,
+    setLocalIsTransactionsUserTypeVisible,
+  ] = useState(isTransactionsUserTypeVisible)
+
+  const [settingsChanged, setSettingsChanged] = useState(false)
+
+  const handleToggleChange = (feature: string, value: boolean) => {
+    setSettingsChanged(true)
+    switch (feature) {
+      case 'isTotalValueVisible':
+        setLocalIsTotalValueVisible(value)
+        break
+      case 'isAvgOrderValueVisible':
+        setLocalIsAvgOrderValueVisible(value)
+        break
+      case 'isConversionRateVisible':
+        setLocalIsConversionRateVisible(value)
+        break
+      case 'isTransactionsUserTypeVisible':
+        setLocalIsTransactionsUserTypeVisible(value)
+        break
+      default:
+        break
+    }
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSaveSettings = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    toggleTotalValue(localIsTotalValueVisible)
+    toggleAvgOrderValue(localIsAvgOrderValueVisible)
+    toggleConversionRate(localIsConversionRateVisible)
+    toggleTransactionsUserType(localIsTransactionsUserTypeVisible)
+
+    setSettingsChanged(false)
   }
 
   return (
@@ -41,50 +73,62 @@ const Settings = () => {
         <Typography variant='h4' gutterBottom>
           Dashboard Features
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSaveSettings}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <FormGroup>
                 <FormControlLabel
-                  control={
-                    <Switch
-                      checked={showRevenue}
-                      onChange={handleShowRevenueChange}
-                    />
+                  control={<Switch checked={localIsTotalValueVisible} />} // Use local state
+                  label='Total Value'
+                  onChange={() =>
+                    handleToggleChange(
+                      'isTotalValueVisible',
+                      !localIsTotalValueVisible
+                    )
                   }
-                  label='Revenue'
+                />
+                <FormControlLabel
+                  control={<Switch checked={localIsAvgOrderValueVisible} />} // Use local state
+                  label='Avg. Order Value'
+                  onChange={() =>
+                    handleToggleChange(
+                      'isAvgOrderValueVisible',
+                      !localIsAvgOrderValueVisible
+                    )
+                  }
+                />
+                <FormControlLabel
+                  control={<Switch checked={localIsConversionRateVisible} />} // Use local state
+                  label='Conversion Rate'
+                  onChange={() =>
+                    handleToggleChange(
+                      'isConversionRateVisible',
+                      !localIsConversionRateVisible
+                    )
+                  }
                 />
                 <FormControlLabel
                   control={
-                    <Switch
-                      checked={showProfit}
-                      onChange={handleShowProfitChange}
-                    />
+                    <Switch checked={localIsTransactionsUserTypeVisible} />
+                  } // Use local state
+                  label='Transactions Per User Type'
+                  onChange={() =>
+                    handleToggleChange(
+                      'isTransactionsUserTypeVisible',
+                      !localIsTransactionsUserTypeVisible
+                    )
                   }
-                  label='Profit'
-                />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={showOrders}
-                      onChange={handleShowOrdersChange}
-                    />
-                  }
-                  label='Orders'
-                />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={showCustomers}
-                      onChange={handleShowCustomersChange}
-                    />
-                  }
-                  label='Customers'
                 />
               </FormGroup>
             </Grid>
-            <Grid xs={12}>
-              <Button type='submit' variant='contained' color='primary'>
+            {/* Conditionally disable Save button if no changes are made */}
+            <Grid item xs={12}>
+              <Button
+                type='submit'
+                variant='contained'
+                color='primary'
+                disabled={!settingsChanged}
+              >
                 Save Settings
               </Button>
             </Grid>

@@ -4,9 +4,11 @@ import styles from './Layout.module.scss'
 import { useSession } from 'next-auth/react'
 import Head from 'next/head'
 import Footer from '../Footer'
+import { useMediaQuery } from '@mui/material'
 
 const Layout = (props: any) => {
   const { data: session } = useSession()
+  const mobileCheck = useMediaQuery('(min-width: 600px)')
 
   return (
     <>
@@ -18,7 +20,13 @@ const Layout = (props: any) => {
       </Head>
       <main
         className={styles.layout}
-        style={{ padding: session ? '0 24px 0 80px' : 0 }}
+        style={{
+          padding: session
+            ? mobileCheck
+              ? '0 24px 130px 80px'
+              : '0 24px 80px 80px'
+            : 0,
+        }}
       >
         {session && <SideMenu />}
         {props.children}
