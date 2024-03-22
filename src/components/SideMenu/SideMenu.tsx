@@ -46,11 +46,11 @@ const closedMixin = (theme: Theme): CSSObject => ({
 const menuRouteList = ['', 'data', 'profile', 'settings']
 const menuListTranslations = ['Home', 'Data', 'Profile', 'Settings', 'Sign Out']
 const menuListIcons = [
-  <HomeIcon />,
-  <EqualizerIcon />,
-  <Person2Icon />,
-  <SettingsIcon />,
-  <ExitToAppIcon />,
+  <HomeIcon key='home' />,
+  <EqualizerIcon key='equalizer' />,
+  <Person2Icon key='person2' />,
+  <SettingsIcon key='settings' />,
+  <ExitToAppIcon key='exitToApp' />,
 ]
 
 const SideMenu = () => {
